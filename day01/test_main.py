@@ -1,6 +1,6 @@
 import pytest
 
-from day01 import find_increases_count
+from day01 import find_naive_increases_count
 
 
 @pytest.mark.parametrize(
@@ -25,5 +25,5 @@ from day01 import find_increases_count
         "example",
         "first lines of real data",
     ])
-def test_find_increases_count(data, expected):
-    assert find_increases_count(data) == expected
+def test_find_naive_increases_count(data, expected):
+    assert find_naive_increases_count(data) == expected

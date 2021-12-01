@@ -1,7 +1,7 @@
 from pathlib import Path
 
 
-def find_increases_count(data):
+def find_naive_increases_count(data):
     items_processed = 0
     increases_count = 0
     for idx, item in enumerate(data):
@@ -20,4 +20,4 @@ def find_increases_count(data):
 if __name__ == "__main__":
     with open(Path(__file__).parent / "data.txt", "r") as f:
         data = [num for num in f.readlines()]
-        print(find_increases_count([int(item.strip()) for item in data]))
+        print(find_naive_increases_count([int(item.strip()) for item in data]))
