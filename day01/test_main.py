@@ -1,6 +1,6 @@
 import pytest
 
-from day01 import find_naive_increases_count
+from day01 import find_naive_increases_count, find_sliding_window_increases_count
 
 
 @pytest.mark.parametrize(
@@ -27,3 +27,27 @@ from day01 import find_naive_increases_count
     ])
 def test_find_naive_increases_count(data, expected):
     assert find_naive_increases_count(data) == expected
+
+
+@pytest.mark.parametrize(
+    "data, expected", [
+        ([], 0),
+        ([199], 0),
+        ([1, 2, 3], 0),
+        ([1, 2, 3, 1, 2, 3], 0),
+        ([1, 2, 3, 2, 2, 3], 1),
+        ([1, 2, 3, 1, 2, 3], 0),
+        ([1, 2, 3, 2, 2, 3, 1, 2, 3], 1),
+        ([1, 2, 3, 2, 2, 3, 3, 2, 3], 2),
+    ], ids=[
+        "empty set",
+        "single item",
+        "one windows",
+        "two windows, no increase",
+        "two windows, increase",
+        "two windows, decrease",
+        "three windows, second increases",
+        "three windows, all increase",
+    ])
+def test_sliding_window_increases_count(data, expected):
+    assert find_sliding_window_increases_count(data) == expected
