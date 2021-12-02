@@ -121,5 +121,5 @@ if __name__ == "__main__":
     with open(Path(__file__).parent / "data.txt", "r") as f:
         moves = [Position.parse_string(s) for s in f.readlines()]
         s.move_multiple(moves)
-        print(s.position)
-        print(s.position.multiple)
+        print(f"Position: {s.position}")
+        print(f"Multiple: {s.position.multiple}")

@@ -16,7 +16,7 @@ def find_naive_increases_count(data):
 
 def find_sliding_window_increases_count(data, *, window_size=3):
     def _get_window_at(start: int):
-        return data[start:start + window_size]
+        return data[start : start + window_size]
 
     if len(data) < window_size:
         return 0
@@ -40,5 +40,7 @@ if __name__ == "__main__":
         data = [num for num in f.readlines()]
         naive = find_naive_increases_count([int(item.strip()) for item in data])
         print(f"naive: {naive}")
-        sliding_window = find_sliding_window_increases_count([int(item.strip()) for item in data])
+        sliding_window = find_sliding_window_increases_count(
+            [int(item.strip()) for item in data]
+        )
         print(f"sliding window: {sliding_window}")
