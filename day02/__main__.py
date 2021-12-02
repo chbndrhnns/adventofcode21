@@ -4,6 +4,7 @@ from typing import List
 
 class Position:
     available_moves = []
+    __string__ = None
 
     def __init__(self, horizontal=0, depth=0):
         self._h = horizontal
@@ -74,6 +75,10 @@ class Position:
         return False
 
 
+class PositionWithAim(Position):
+    ...
+
+
 class Forward(Position):
 
     __string__ = "forward"
@@ -97,8 +102,8 @@ class Up(Position):
 
 
 class Submarine:
-    def __init__(self):
-        self._position = Position()
+    def __init__(self, position_strategy=Position):
+        self._position = position_strategy()
 
     @property
     def position(self):
@@ -114,6 +119,10 @@ class Submarine:
     @classmethod
     def create(cls):
         return cls()
+
+    @classmethod
+    def create_with_aim(cls):
+        return cls(position_strategy=PositionWithAim)
 
 
 if __name__ == "__main__":
