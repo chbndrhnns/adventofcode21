@@ -1,6 +1,6 @@
 import pytest
 
-from day02.__main__ import Down, Forward, Position, Submarine, Up
+from day02.__main__ import Command, Down, Forward, Position, Submarine, Up
 
 
 class TestPosition:
@@ -26,7 +26,7 @@ class TestSteps:
         [("forward 5", Forward(5)), ("up 0", Up(0)), ("down 5", Down(5))],
     )
     def test_from_string_ok(self, step, expected):
-        assert Position.parse_string(step) == expected
+        assert Command.parse_string(step) == expected
 
     @pytest.mark.parametrize(
         "step,expected_error",
@@ -34,7 +34,7 @@ class TestSteps:
     )
     def test_from_string_error(self, step, expected_error):
         with pytest.raises(ValueError) as err:
-            Position.parse_string(step)
+            Command.parse_string(step)
 
         assert expected_error in err.value.args[0]
 
