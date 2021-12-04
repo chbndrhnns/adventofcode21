@@ -1,6 +1,6 @@
 from abc import ABC
 from pathlib import Path
-from typing import List
+from typing import List, Type
 
 
 class Command(ABC):
@@ -106,7 +106,32 @@ class Position:
 
 
 class PositionWithAim(Position):
-    ...
+    def __init__(self, horizontal=0, depth=0, aim=0):
+        super().__init__(horizontal, depth)
+        self._aim = aim
+
+    @property
+    def aim(self):
+        return self._aim
+
+    def __add__(self, other):
+        if not isinstance(other, (self.__class__, Command)):
+            raise NotImplementedError()
+
+        instance = self.__class__(
+            horizontal=self.horizontal + other.horizontal,
+            depth=self.depth,
+            aim=self.aim,
+        )
+        if isinstance(other, (Down, Up)):
+            instance._aim += other.depth
+        if isinstance(other, Forward):
+            instance._d += instance.aim * other.horizontal
+
+        return instance
+
+    def __str__(self):
+        return f"{self.__class__.__name__}(h={self.horizontal}, d={self.depth}, aim={self.aim})"
 
 
 class Forward(Command):
@@ -147,12 +172,8 @@ class Submarine:
             self.move(step)
 
     @classmethod
-    def create(cls):
-        return cls()
-
-    @classmethod
-    def create_with_aim(cls):
-        return cls(position_strategy=PositionWithAim)
+    def create(cls, position_strategy: Type[Position] = Position):
+        return cls(position_strategy=position_strategy)
 
 
 if __name__ == "__main__":

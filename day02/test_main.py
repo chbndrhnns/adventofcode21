@@ -1,6 +1,14 @@
 import pytest
 
-from day02.__main__ import Command, Down, Forward, Position, Submarine, Up
+from day02.__main__ import (
+    Command,
+    Down,
+    Forward,
+    Position,
+    PositionWithAim,
+    Submarine,
+    Up,
+)
 
 
 class TestPosition:
@@ -12,6 +20,55 @@ class TestPosition:
     def test_add(self):
         assert Position() + Position() == Position()
         assert Position(1, 0) + Position(-1, 0) == Position()
+
+
+class TestPositionWithAim:
+    def test_has_aim(self):
+        assert PositionWithAim().aim == 0
+
+    def test_down_increases_aim(self):
+        actual = PositionWithAim() + Down(1)
+        assert actual.aim == 1
+
+    def test_up_decreases_aim(self):
+        actual = PositionWithAim() + Up(1)
+        assert actual.aim == -1
+
+    class TestScenarioFromText:
+        def test_forward_does_not_change_initial_aim(self):
+            actual = PositionWithAim() + Forward(5)
+            assert actual.horizontal == 5
+            assert actual.aim == 0
+            assert actual.depth == 0
+
+        def test_down_adds_to_aim(self):
+            actual = PositionWithAim(5, 0, 0) + Down(5)
+            assert actual.horizontal == 5
+            assert actual.aim == 5
+
+        def test_forward_multiplies_aim(self):
+            actual = PositionWithAim(5, 0, 5) + Forward(8)
+            assert actual.horizontal == 13
+            assert actual.depth == 40
+            assert actual.aim == 5
+
+        def test_up_decreases_aim(self):
+            actual = PositionWithAim(13, 40, 5) + Up(3)
+            assert actual.horizontal == 13
+            assert actual.depth == 40
+            assert actual.aim == 2
+
+        def test_down_increases_aim(self):
+            actual = PositionWithAim(13, 40, 2) + Down(8)
+            assert actual.horizontal == 13
+            assert actual.depth == 40
+            assert actual.aim == 10
+
+        def test_forward_multiplies_aim_2(self):
+            actual = PositionWithAim(13, 40, 10) + Forward(2)
+            assert actual.horizontal == 15
+            assert actual.depth == 60
+            assert actual.aim == 10
 
 
 class TestSteps:
@@ -68,7 +125,14 @@ def test_can_move_multiple_steps__two():
     assert s.position == Position(4, 0)
 
 
-def test_example():
+@pytest.mark.parametrize(
+    "strategy,position,product",
+    [
+        (Position, Position(15, 10), 150),
+        (PositionWithAim, PositionWithAim(15, 60), 900),
+    ],
+)
+def test_example(strategy, position, product):
     steps = [
         Forward(5),
         Down(5),
@@ -77,7 +141,7 @@ def test_example():
         Down(8),
         Forward(2),
     ]
-    s = Submarine.create()
+    s = Submarine.create(position_strategy=strategy)
     s.move_multiple(steps)
-    assert s.position == Position(15, 10)
-    assert s.position.multiple == 150
+    assert s.position == position
+    assert s.position.multiple == product
