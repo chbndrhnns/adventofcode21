@@ -177,9 +177,12 @@ class Submarine:
 
 
 if __name__ == "__main__":
-    s = Submarine.create()
     with open(Path(__file__).parent / "data.txt", "r") as f:
-        moves = [Position.parse_string(s) for s in f.readlines()]
-        s.move_multiple(moves)
-        print(f"Position: {s.position}")
-        print(f"Multiple: {s.position.product}")
+        moves = [Command.parse_string(s) for s in f.readlines()]
+
+        for strategy in [Position, PositionWithAim]:
+            s = Submarine.create(position_strategy=strategy)
+            print(f"Strategy: {strategy}")
+            s.move_multiple(moves)
+            print(f"Position: {s.position}")
+            print(f"Multiple: {s.position.product}")
