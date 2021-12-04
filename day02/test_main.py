@@ -144,4 +144,4 @@ def test_example(strategy, position, product):
     s = Submarine.create(position_strategy=strategy)
     s.move_multiple(steps)
     assert s.position == position
-    assert s.position.multiple == product
+    assert s.position.product == product

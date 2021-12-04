@@ -76,7 +76,7 @@ class Position:
         return self._d
 
     @property
-    def multiple(self):
+    def product(self):
         return self.depth * self.horizontal
 
     def __add__(self, other):
@@ -182,4 +182,4 @@ if __name__ == "__main__":
         moves = [Position.parse_string(s) for s in f.readlines()]
         s.move_multiple(moves)
         print(f"Position: {s.position}")
-        print(f"Multiple: {s.position.multiple}")
+        print(f"Multiple: {s.position.product}")
