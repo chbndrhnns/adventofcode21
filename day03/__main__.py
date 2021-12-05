@@ -66,25 +66,28 @@ class EpsilonRate(Rate):
         return rate
 
 
-class OxygenGeneratorRating:
+class Rating(ABC):
+    __winner__ = None
+    __loser__ = None
+
     def __init__(self, values: list[str] = None):
         self._values = values or []
-        self._rate = ""
 
         if self._values:
             self._len = len(self._values[0])
+            self._rate = self._calculate_rating()
 
-            for position in range(self._len):
-                self._values = self._get_frequencies(self._values, position)
-                if len(self._values) == 1:
-                    self._rate = self._calculate_rate()
-                    break
+    def _calculate_rating(self):
+        for position in range(self._len):
+            self._values = self._get_frequencies_at(position)
+            if len(self._values) == 1:
+                return self._values[0]
 
-    def _get_frequencies(self, values, position):
+    def _get_frequencies_at(self, position):
         items_with_one = []
         items_with_zero = []
 
-        for item in values:
+        for item in self._values:
             if item[position] == "1":
                 items_with_one.append(item)
             elif item[position] == "0":
@@ -93,11 +96,8 @@ class OxygenGeneratorRating:
                 raise ValueError(f"Cannot parse '{item[position]}'")
 
         if len(items_with_one) >= len(items_with_zero):
-            return items_with_one
-        return items_with_zero
-
-    def _calculate_rate(self):
-        return self._values[0]
+            return locals()[self.__winner__]
+        return locals()[self.__loser__]
 
     @property
     def as_decimal(self):
@@ -109,47 +109,14 @@ class OxygenGeneratorRating:
         return self._rate
 
 
-class Co2ScrubberRating:
-    def __init__(self, values: list[str] = None):
-        self._values = values or []
-        self._rate = ""
+class OxygenGeneratorRating(Rating):
+    __winner__ = "items_with_one"
+    __loser__ = "items_with_zero"
 
-        if self._values:
-            self._len = len(self._values[0])
 
-            for position in range(self._len):
-                self._values = self._get_frequencies(self._values, position)
-                if len(self._values) == 1:
-                    self._rate = self._calculate_rate()
-                    break
-
-    def _get_frequencies(self, values, position):
-        items_with_one = []
-        items_with_zero = []
-
-        for item in values:
-            if item[position] == "1":
-                items_with_one.append(item)
-            elif item[position] == "0":
-                items_with_zero.append(item)
-            else:
-                raise ValueError(f"Cannot parse '{item[position]}'")
-
-        if len(items_with_zero) <= len(items_with_one):
-            return items_with_zero
-        return items_with_one
-
-    def _calculate_rate(self):
-        return self._values[0]
-
-    @property
-    def as_decimal(self):
-        if not self._values:
-            return 0
-        return int(self._rate, 2)
-
-    def __str__(self):
-        return self._rate
+class Co2ScrubberRating(Rating):
+    __winner__ = "items_with_zero"
+    __loser__ = "items_with_one"
 
 
 if __name__ == "__main__":
