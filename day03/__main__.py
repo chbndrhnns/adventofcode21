@@ -1,4 +1,3 @@
-import abc
 import operator
 from abc import ABC
 from pathlib import Path
@@ -6,8 +5,23 @@ from pathlib import Path
 INCREMENT_BY_ONE = 1
 
 
-class Rate(ABC):
-    __operator__ = lambda x, y, z: True
+def null_operator(val1, val2):
+    ...
+
+
+class RepresentationMixin(ABC):
+    @property
+    def as_decimal(self):
+        if not self._values:
+            return 0
+        return int(self._rate, 2)
+
+    def __str__(self):
+        return self._rate
+
+
+class Rate(RepresentationMixin, ABC):
+    __operator__ = null_operator
 
     def __init__(self, values: list[str] = None):
         self._values = values or []
@@ -20,12 +34,6 @@ class Rate(ABC):
 
             self._get_frequencies()
             self._rate = self._calculate_rate()
-
-    @property
-    def as_decimal(self):
-        if not self._values:
-            return 0
-        return int(self._rate, 2)
 
     def _get_frequencies(self):
         for position in range(self._item_length):
@@ -50,11 +58,8 @@ class Rate(ABC):
 
         return rate
 
-    def __str__(self):
-        return self._rate
 
-
-class Rating(ABC):
+class Rating(RepresentationMixin, ABC):
     __winner__ = None
     __loser__ = None
 
@@ -86,15 +91,6 @@ class Rating(ABC):
         if len(items_with_one) >= len(items_with_zero):
             return locals()[self.__winner__]
         return locals()[self.__loser__]
-
-    @property
-    def as_decimal(self):
-        if not self._values:
-            return 0
-        return int(self._rate, 2)
-
-    def __str__(self):
-        return self._rate
 
 
 class GammaRate(Rate):
