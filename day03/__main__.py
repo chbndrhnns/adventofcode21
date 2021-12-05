@@ -75,4 +75,4 @@ if __name__ == "__main__":
 
         print(f"GammaRate: {str(gamma)} ({gamma.as_decimal})")
         print(f"EpsilonRate: {str(epsilon)} ({epsilon.as_decimal})")
-        print(f"Result: {gamma.as_decimal * epsilon.as_decimal}")
+        print(f"Power consumption: {gamma.as_decimal * epsilon.as_decimal}")
