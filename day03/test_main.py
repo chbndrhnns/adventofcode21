@@ -4,37 +4,42 @@ import pytest
 class GammaRate:
     def __init__(self, values: list[str] = None):
         self._values = values or []
+        self._rate = ""
 
-        if not self._values:
-            self._rate = ""
+        if self._values:
+            self._len = len(self._values[0]) if self._values else 0
+            self._ones_by_position = {pos: 0 for pos in range(self._len)}
+            self._zeros_by_position = {pos: 0 for pos in range(self._len)}
 
-        else:
-            num_len = len(self._values[0])
-
-            result = ""
-            for position in range(num_len):
-
-                ones = 0
-                zeros = 0
-
-                for item in self._values:
-                    if item[position] == "1":
-                        ones += 1
-                    elif item[position] == "0":
-                        zeros += 1
-                    else:
-                        raise ValueError(f"Cannot parse '{item[position]}'")
-
-                if ones > zeros:
-                    result += "1"
-                else:
-                    result += "0"
-
-            self._rate = result
+            self._get_frequencies()
+            self._rate = self._calculate_rate()
 
     @property
     def as_decimal(self):
+        if not self._values:
+            return 0
         return int(self._rate, 2)
+
+    def _get_frequencies(self):
+        for position in range(self._len):
+            for item in self._values:
+                if item[position] == "1":
+                    self._ones_by_position[position] += 1
+                elif item[position] == "0":
+                    self._zeros_by_position[position] += 1
+                else:
+                    raise ValueError(f"Cannot parse '{item[position]}'")
+
+    def _calculate_rate(self):
+        rate = ""
+
+        for pos in range(self._len):
+            if self._ones_by_position[pos] > self._zeros_by_position[pos]:
+                rate += "1"
+            else:
+                rate += "0"
+
+        return rate
 
     def __str__(self):
         return self._rate
@@ -83,7 +88,9 @@ class TestGammaRate:
     cls = GammaRate
 
     def test_empty_for_empty_input(self):
-        assert str(self.cls([])) == ""
+        actual = self.cls([])
+        assert str(actual) == ""
+        assert actual.as_decimal == 0
 
     @pytest.mark.parametrize(
         "inp,result",
