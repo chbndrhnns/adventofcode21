@@ -1,7 +1,10 @@
+import abc
+from abc import ABC
+
 import pytest
 
 
-class GammaRate:
+class Rate(ABC):
     def __init__(self, values: list[str] = None):
         self._values = values or []
         self._rate = ""
@@ -30,6 +33,15 @@ class GammaRate:
                 else:
                     raise ValueError(f"Cannot parse '{item[position]}'")
 
+    @abc.abstractmethod
+    def _calculate_rate(self):
+        ...
+
+    def __str__(self):
+        return self._rate
+
+
+class GammaRate(Rate):
     def _calculate_rate(self):
         rate = ""
 
@@ -41,47 +53,18 @@ class GammaRate:
 
         return rate
 
-    def __str__(self):
-        return self._rate
 
+class EpsilonRate(Rate):
+    def _calculate_rate(self):
+        rate = ""
 
-class EpsilonRate:
-    def __init__(self, values: list[str] = None):
-        self._values = values or []
+        for pos in range(self._len):
+            if self._ones_by_position[pos] > self._zeros_by_position[pos]:
+                rate += "0"
+            else:
+                rate += "1"
 
-        if not self._values:
-            self._rate = ""
-
-        else:
-            num_len = len(self._values[0])
-
-            result = ""
-            for position in range(num_len):
-
-                ones = 0
-                zeros = 0
-
-                for item in self._values:
-                    if item[position] == "1":
-                        ones += 1
-                    elif item[position] == "0":
-                        zeros += 1
-                    else:
-                        raise ValueError(f"Cannot parse '{item[position]}'")
-
-                if ones < zeros:
-                    result += "1"
-                else:
-                    result += "0"
-
-            self._rate = result
-
-    @property
-    def as_decimal(self):
-        return int(self._rate, 2)
-
-    def __str__(self):
-        return self._rate
+        return rate
 
 
 class TestGammaRate:
