@@ -54,14 +54,6 @@ class Rate(ABC):
         return self._rate
 
 
-class GammaRate(Rate):
-    __operator__ = operator.ge
-
-
-class EpsilonRate(Rate):
-    __operator__ = operator.le
-
-
 class Rating(ABC):
     __winner__ = None
     __loser__ = None
@@ -103,6 +95,14 @@ class Rating(ABC):
 
     def __str__(self):
         return self._rate
+
+
+class GammaRate(Rate):
+    __operator__ = operator.ge
+
+
+class EpsilonRate(Rate):
+    __operator__ = operator.le
 
 
 class OxygenGeneratorRating(Rating):
