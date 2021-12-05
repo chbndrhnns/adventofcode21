@@ -1,9 +1,26 @@
-import abc
-from abc import ABC
-
 import pytest
 
-from day03.__main__ import EpsilonRate, GammaRate
+from day03.__main__ import (
+    Co2ScrubberRating,
+    EpsilonRate,
+    GammaRate,
+    OxygenGeneratorRating,
+)
+
+data = [
+    "00100",
+    "11110",
+    "10110",
+    "10111",
+    "10101",
+    "01111",
+    "00111",
+    "11100",
+    "10000",
+    "11001",
+    "00010",
+    "01010",
+]
 
 
 class TestGammaRate:
@@ -30,20 +47,6 @@ class TestGammaRate:
         assert str(self.cls(inp)) == result
 
     def test_example(self):
-        data = [
-            "00100",
-            "11110",
-            "10110",
-            "10111",
-            "10101",
-            "01111",
-            "00111",
-            "11100",
-            "10000",
-            "11001",
-            "00010",
-            "01010",
-        ]
         actual = self.cls(data)
         assert str(actual) == "10110"
         assert actual.as_decimal == 22
@@ -83,20 +86,42 @@ class TestEpsilonRate:
         assert str(self.cls(inp)) == result
 
     def test_example(self):
-        data = [
-            "00100",
-            "11110",
-            "10110",
-            "10111",
-            "10101",
-            "01111",
-            "00111",
-            "11100",
-            "10000",
-            "11001",
-            "00010",
-            "01010",
-        ]
         actual = self.cls(data)
         assert str(actual) == "01001"
         assert actual.as_decimal == 9
+
+
+class TestOxygenGeneratorRating:
+    cls = OxygenGeneratorRating
+
+    @pytest.mark.parametrize(
+        "inp,result",
+        [
+            (["10", "11", "01"], "11"),
+        ],
+    )
+    def test_(self, inp, result):
+        assert str(self.cls(inp)) == result
+
+    def test_example(self):
+        actual = self.cls(data)
+        assert str(actual) == "10111"
+        assert actual.as_decimal == 23
+
+
+class TestCo2ScrubberRating:
+    cls = Co2ScrubberRating
+
+    @pytest.mark.parametrize(
+        "inp,result",
+        [
+            (["10", "11", "01"], "01"),
+        ],
+    )
+    def test_(self, inp, result):
+        assert str(self.cls(inp)) == result
+
+    def test_example(self):
+        actual = self.cls(data)
+        assert str(actual) == "01010"
+        assert actual.as_decimal == 10

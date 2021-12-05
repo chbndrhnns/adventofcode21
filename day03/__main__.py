@@ -66,6 +66,92 @@ class EpsilonRate(Rate):
         return rate
 
 
+class OxygenGeneratorRating:
+    def __init__(self, values: list[str] = None):
+        self._values = values or []
+        self._rate = ""
+
+        if self._values:
+            self._len = len(self._values[0])
+
+            for position in range(self._len):
+                self._values = self._get_frequencies(self._values, position)
+                if len(self._values) == 1:
+                    self._rate = self._calculate_rate()
+                    break
+
+    def _get_frequencies(self, values, position):
+        items_with_one = []
+        items_with_zero = []
+
+        for item in values:
+            if item[position] == "1":
+                items_with_one.append(item)
+            elif item[position] == "0":
+                items_with_zero.append(item)
+            else:
+                raise ValueError(f"Cannot parse '{item[position]}'")
+
+        if len(items_with_one) >= len(items_with_zero):
+            return items_with_one
+        return items_with_zero
+
+    def _calculate_rate(self):
+        return self._values[0]
+
+    @property
+    def as_decimal(self):
+        if not self._values:
+            return 0
+        return int(self._rate, 2)
+
+    def __str__(self):
+        return self._rate
+
+
+class Co2ScrubberRating:
+    def __init__(self, values: list[str] = None):
+        self._values = values or []
+        self._rate = ""
+
+        if self._values:
+            self._len = len(self._values[0])
+
+            for position in range(self._len):
+                self._values = self._get_frequencies(self._values, position)
+                if len(self._values) == 1:
+                    self._rate = self._calculate_rate()
+                    break
+
+    def _get_frequencies(self, values, position):
+        items_with_one = []
+        items_with_zero = []
+
+        for item in values:
+            if item[position] == "1":
+                items_with_one.append(item)
+            elif item[position] == "0":
+                items_with_zero.append(item)
+            else:
+                raise ValueError(f"Cannot parse '{item[position]}'")
+
+        if len(items_with_zero) <= len(items_with_one):
+            return items_with_zero
+        return items_with_one
+
+    def _calculate_rate(self):
+        return self._values[0]
+
+    @property
+    def as_decimal(self):
+        if not self._values:
+            return 0
+        return int(self._rate, 2)
+
+    def __str__(self):
+        return self._rate
+
+
 if __name__ == "__main__":
     with open(Path(__file__).parent / "data.txt", "r") as f:
         items = [item.strip() for item in f.readlines()]
@@ -76,3 +162,10 @@ if __name__ == "__main__":
         print(f"GammaRate: {str(gamma)} ({gamma.as_decimal})")
         print(f"EpsilonRate: {str(epsilon)} ({epsilon.as_decimal})")
         print(f"Power consumption: {gamma.as_decimal * epsilon.as_decimal}")
+
+        oxygen = OxygenGeneratorRating(items)
+        co2 = Co2ScrubberRating(items)
+
+        print(f"OxygenGeneratorRating: {str(oxygen)} ({oxygen.as_decimal})")
+        print(f"Co2ScrubberRating: {str(co2)} ({co2.as_decimal})")
+        print(f"Life support rating: {oxygen.as_decimal * co2.as_decimal}")
