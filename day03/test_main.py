@@ -116,6 +116,7 @@ class TestCo2ScrubberRating:
         "inp,result",
         [
             (["10", "11", "01"], "01"),
+            (["100", "100", "010"], "010"),
         ],
     )
     def test_(self, inp, result):
